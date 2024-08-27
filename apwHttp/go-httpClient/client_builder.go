@@ -14,7 +14,6 @@ type clientBuilder struct {
 }
 
 type ClientBuilder interface {
-	//client config
 	SetHeaders(headers http.Header) ClientBuilder
 	SetConnectionTimeout(timeout time.Duration) ClientBuilder
 	SetResponsetimeout(rTimeout time.Duration) ClientBuilder
@@ -34,7 +33,6 @@ func (c *clientBuilder) Build() Client {
 	return client
 }
 
-// this is wher we set the default headers
 func (c *clientBuilder) SetHeaders(headers http.Header) ClientBuilder {
 	c.headers = headers
 	return c

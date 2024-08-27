@@ -18,8 +18,6 @@ const (
 	defaultConnectionTimeoutDuration = time.Second * 1
 )
 
-// here i put all the basic things we need for request
-// the header in the parameter is the header set per request
 func (c *httpClient) do(httpMethod, url string, headers http.Header, body any) (*Response, error) {
 
 	fullHeaders := c.getRequestHeader(headers)
@@ -36,8 +34,6 @@ func (c *httpClient) do(httpMethod, url string, headers http.Header, body any) (
 
 	request.Header = fullHeaders
 
-	//when the first request comes i, he will make the new client and set all the configurations
-	//after that. all the coming request will use the same client created by the first request
 	client := c.getHttpClient()
 
 	resp, err := client.Do(request)
@@ -67,23 +63,14 @@ func (c *httpClient) getHttpClient() *http.Client {
 		c.client = &http.Client{
 			Timeout: c.getConnectionTimeout() + c.getResponseTimeout(),
 			Transport: &http.Transport{
-				//this should be configure based on the traffic in your application
-				//the ammount of connection we want to have as idle in our connection\
-				//idle meaning that you have connections in there doing nothing but waiting for an incoming request
-				//and then you can use that connection to perform a request without opening a brand new connection
-				MaxIdleConnsPerHost: c.getMaxIdleConnections(),
-				//this is the amount of time we;re gonna wait for the response to comeback
+				MaxIdleConnsPerHost:   c.getMaxIdleConnections(),
 				ResponseHeaderTimeout: c.getResponseTimeout(),
-
-				//this is how long we're gonna wait for a new connection
 				DialContext: (&net.Dialer{
 					Timeout: c.getConnectionTimeout(),
 				}).DialContext,
 			},
 		}
 	})
-
-	//this is the default client
 
 	return c.client
 }
@@ -148,7 +135,6 @@ func (v *httpClient) getRequestBody(contentType string, body any) ([]byte, error
 	case "application/xml":
 		return xml.Marshal(body)
 	default:
-		//we ahve a default json body
 		return json.Marshal(body)
 	}
 

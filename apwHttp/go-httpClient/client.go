@@ -6,8 +6,6 @@ import (
 )
 
 type Client interface {
-
-	//methods for interacting HTTP calls
 	Get(url string, headers http.Header) (*Response, error)
 	Post(url string, headers http.Header, body any) (*Response, error)
 	Put(url string, headers http.Header, body any) (*Response, error)
@@ -15,12 +13,8 @@ type Client interface {
 	Delete(url string, headers http.Header) (*Response, error)
 }
 
-// the client should be a singleton:
-// the users dont need to create a client for every request
-// it just need to initialize one client that can be used in all the request
 type httpClient struct {
-	builder *clientBuilder
-	//now it is a singleton client, it can be use in all our request
+	builder    *clientBuilder
 	client     *http.Client
 	clientOnce sync.Once
 }
